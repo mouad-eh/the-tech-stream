@@ -1,5 +1,6 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
+from scraping.items import BlogArticle
 
 
 class BlogRules:
@@ -12,16 +13,16 @@ class BlogRules:
 
 class BlogSpider(scrapy.Spider):
     name = 'engblog'
-    start_urls = ['https://discord.com/category/engineering',
-                  'https://blog.cloudflare.com/tag/developers/',
-                  'https://shopify.engineering/',
-                  'https://stripe.com/blog/engineering',
-                  'https://github.blog/category/engineering/',
-                  'https://www.uber.com/en-ES/blog/engineering/',
-                  'https://engineering.linkedin.com/blog',
-                  'https://engineering.fb.com/',
-                  'https://engineering.atspotify.com/'
-                  ]
+    start_urls = [  # 'https://discord.com/category/engineering',
+        #   'https://blog.cloudflare.com/tag/developers/',
+        #   'https://shopify.engineering/',
+        'https://stripe.com/blog/engineering',
+        #   'https://github.blog/category/engineering/',
+        #   'https://www.uber.com/en-ES/blog/engineering/',
+        #   'https://engineering.linkedin.com/blog',
+        #   'https://engineering.fb.com/',
+        #   'https://engineering.atspotify.com/'
+    ]
     blogs = {
         'https://discord.com/category/engineering': BlogRules(
             domain="discord.com",
@@ -78,4 +79,18 @@ class BlogSpider(scrapy.Spider):
             allow=rules.allow, deny=rules.deny, allow_domains=rules.domain, restrict_css=rules.restrict_css)
         links = link_extractor.extract_links(response)
         for link in links:
-            print(link.url)
+            yield scrapy.Request(link.url, self.getDetails)
+
+    def getDetails(self, response):
+        yield BlogArticle(url=response.url, date=self.getDate(
+            response), title=self.getTitle(response.url))
+
+    def getDate(self, response):
+        return response.xpath('//@datetime').get()
+
+    def getTitle(self, url):
+        url_parts = url.split('/')
+        title_with_hyphens = url_parts[-1]
+        title_words = title_with_hyphens.split('-')
+        title = ' '.join(title_words)
+        return title
