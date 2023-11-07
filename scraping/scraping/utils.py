@@ -12,7 +12,6 @@ blogs = {
         'domain': ["discord.com"],
         'allow': ["/blog/"],
         'date': "//div[@class='blog-post-author-name']/text()"
-        # date neeed formating
     },
     'https://blog.cloudflare.com/tag/developers/': {
         'domain': ['blog.cloudflare.com'],
@@ -38,13 +37,11 @@ blogs = {
         'allow': ['/en-ES/blog/'],
         'deny': ['/blog/engineering/', '/blog/ride/', '/blog/business/', '/blog/careers/', '^https://www.uber.com/en-ES/blog/$'],
         'date': "//span[@class='b5 gt b7 ff hc']/text()"
-        # date need special formating + year missing
     },
     'https://engineering.linkedin.com/blog': {
         'domain': ['engineering.linkedin.com'],
         'allow': ['/blog/\d{4}/'],
         'date': "//div[@class='date']/text()"
-        # date need special formating
     },
     'https://engineering.fb.com/': {
         'domain': ['engineering.fb.com'],
@@ -54,6 +51,5 @@ blogs = {
         'domain': ['engineering.atspotify.com'],
         'allow': ['/\d{4}/\d{2}'],
         'date': "//span[@class='date']/text()"
-        # date need formatting
     }
 }

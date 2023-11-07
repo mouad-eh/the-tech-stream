@@ -2,6 +2,8 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scraping.items import BlogArticle
 from scraping.utils import blogs
+from dateutil import parser
+from datetime import datetime
 
 
 class BlogSpider(scrapy.Spider):
@@ -24,7 +26,10 @@ class BlogSpider(scrapy.Spider):
 
     def getDate(self, response, main_url):
         query = self.BLOGS[main_url].get('date', '//@datetime')
-        return response.xpath(query).get()
+        rawDate = response.xpath(query).get()
+        # default to get the current year when it is not specified in the rawDate
+        parsedDateTime = parser.parse(rawDate, default=datetime.now())
+        return parsedDateTime.date()
 
     def getTitle(self, response, main_url):
         url = response.url
