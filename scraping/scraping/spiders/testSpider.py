@@ -1,7 +1,6 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scraping.items import BlogArticle
-from scraping.utils import blogs
 from dateutil import parser
 from datetime import datetime
 
@@ -9,47 +8,62 @@ from datetime import datetime
 class BlogSpider(scrapy.Spider):
     name = "engblog"
 
-    BLOGS = blogs
-    start_urls = list(BLOGS.keys())
+    def __init__(
+        self,
+        start_url=None,
+        domain=None,
+        allow=None,
+        deny=None,
+        restrict_css=None,
+        date=None,
+        title=None,
+        *args,
+        **kwargs
+    ):
+        super(BlogSpider, self).__init__(*args, **kwargs)
+        self.start_urls = start_url
+        self.domain = domain
+        self.allow = allow
+        self.deny = deny
+        self.restrict_css = restrict_css
+        self.date = date
+        self.title = title
+
+    def start_requests(self):
+        yield scrapy.Request(self.start_urls, self.parse)
 
     def parse(self, response):
-        blog = self.BLOGS[response.url]
         link_extractor = LinkExtractor(
-            allow=blog.get("allow", None),
-            deny=blog.get("deny", None),
-            allow_domains=blog.get("domain", None),
-            restrict_css=blog.get("restrict_css", None),
+            allow=self.allow,
+            deny=self.deny,
+            allow_domains=self.domain,
+            restrict_css=self.restrict_css,
         )
         links = link_extractor.extract_links(response)
         for link in links:
             yield scrapy.Request(
                 link.url,
                 callback=self.getDetails,
-                cb_kwargs=dict(main_url=response.url),
             )
 
-    def getDetails(self, response, main_url):
+    def getDetails(self, response):
         yield BlogArticle(
             url=response.url,
-            date=self.getDate(response, main_url),
-            title=self.getTitle(response, main_url),
+            date=self.getDate(response),
+            title=self.getTitle(response),
         )
 
-    def getDate(self, response, main_url):
-        query = self.BLOGS[main_url].get("date", "//@datetime")
+    def getDate(self, response):
+        query = self.date if self.date is not None else "//@datetime"
         rawDate = response.xpath(query).get()
         # default to get the current year when it is not specified in the rawDate
         parsedDateTime = parser.parse(rawDate, default=datetime.now())
         return parsedDateTime.date()
 
-    def getTitle(self, response, main_url):
+    def getTitle(self, response):
         url = response.url
         url_parts = url.split("/")
         title_with_hyphens = url_parts[-2] if url.endswith("/") else url_parts[-1]
         title_words = title_with_hyphens.split("-")
         rawTitle = " ".join(title_words)
-        return (
-            self.BLOGS[main_url]["title"](rawTitle)
-            if "title" in self.BLOGS[main_url].keys()
-            else rawTitle
-        )
+        return self.title(rawTitle) if self.title is not None else rawTitle

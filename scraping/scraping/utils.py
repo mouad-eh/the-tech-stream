@@ -8,12 +8,14 @@ def processGithubBlogTitle(rawTitle):
 
 
 blogs = {
-    "https://discord.com/category/engineering": {
+    "discord": {
+        "start_url": "https://discord.com/category/engineering",
         "domain": ["discord.com"],
         "allow": ["/blog/"],
         "date": "//div[@class='blog-post-author-name']/text()",
     },
-    "https://blog.cloudflare.com/tag/developers/": {
+    "cloudflare": {
+        "start_url": "https://blog.cloudflare.com/tag/developers/",
         "domain": ["blog.cloudflare.com"],
         "deny": [
             "/tag/",
@@ -22,8 +24,10 @@ blogs = {
             "^https://blog.cloudflare.com/$",
             "https://blog.cloudflare.com/([a-z]{2}-[a-z]{2})",
         ],
+        "date": "//article/p/text()",
     },
-    "https://shopify.engineering/": {
+    "shopify": {
+        "start_url": "https://shopify.engineering/",
         "domain": ["shopify.engineering"],
         "deny": [
             "^https://shopify.engineering/$",
@@ -36,17 +40,20 @@ blogs = {
         ],
         "restrict_css": [".grid__item--desktop-up-two-thirds"],
     },
-    "https://stripe.com/blog/engineering": {
+    "stripe": {
+        "start_url": "https://stripe.com/blog/engineering",
         "domain": ["stripe.com"],
         "allow": ["/blog/"],
         "deny": ["/blog/engineering", "/blog/feed.rss"],
     },
-    "https://github.blog/category/engineering/": {
+    "github": {
+        "start_url": "https://github.blog/category/engineering/",
         "domain": ["github.blog"],
         "allow": ["https://github.blog/\d{4}-\d{2}-\d{2}"],
         "title": processGithubBlogTitle,
     },
-    "https://www.uber.com/en-ES/blog/engineering/": {
+    "uber": {
+        "start_url": "https://www.uber.com/en-ES/blog/engineering/",
         "domain": ["www.uber.com"],
         "allow": ["/en-ES/blog/"],
         "deny": [
@@ -58,16 +65,19 @@ blogs = {
         ],
         "date": "//span[@class='b5 gt b7 ff hc']/text()",
     },
-    "https://engineering.linkedin.com/blog": {
+    "linkedin": {
+        "start_url": "https://engineering.linkedin.com/blog",
         "domain": ["engineering.linkedin.com"],
         "allow": ["/blog/\d{4}/"],
         "date": "//div[@class='date']/text()",
     },
-    "https://engineering.fb.com/": {
+    "facebook": {
+        "start_url": "https://engineering.fb.com/",
         "domain": ["engineering.fb.com"],
         "allow": ["/\d{4}/\d{2}/\d{2}"],
     },
-    "https://engineering.atspotify.com/": {
+    "spotify": {
+        "start_url": "https://engineering.atspotify.com/",
         "domain": ["engineering.atspotify.com"],
         "allow": ["/\d{4}/\d{2}"],
         "date": "//span[@class='date']/text()",
