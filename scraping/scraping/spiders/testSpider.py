@@ -1,69 +1,56 @@
 import scrapy
-from scrapy.linkextractors import LinkExtractor
 from scraping.items import BlogArticle
+from urllib.parse import urlunparse
 from dateutil import parser
 from datetime import datetime
+import logging
 
 
 class BlogSpider(scrapy.Spider):
     name = "engblog"
 
-    def __init__(
-        self,
-        start_url=None,
-        domain=None,
-        allow=None,
-        deny=None,
-        restrict_css=None,
-        date=None,
-        title=None,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, date=None, *args, **kwargs):
         super(BlogSpider, self).__init__(*args, **kwargs)
-        self.start_urls = start_url
-        self.domain = domain
-        self.allow = allow
-        self.deny = deny
-        self.restrict_css = restrict_css
         self.date = date
-        self.title = title
 
     def start_requests(self):
-        yield scrapy.Request(self.start_urls, self.parse)
+        yield scrapy.Request(self.start_url, self.parse)
 
     def parse(self, response):
-        link_extractor = LinkExtractor(
-            allow=self.allow,
-            deny=self.deny,
-            allow_domains=self.domain,
-            restrict_css=self.restrict_css,
-        )
-        links = link_extractor.extract_links(response)
-        for link in links:
+        selectors = response.xpath(self.blog_url_xpath)
+        for selector in selectors:
+            blog_path = selector.get()
+            blog_url = (
+                blog_path
+                if blog_path.startswith("https")
+                else urlunparse(("https", self.domain, blog_path, "", "", ""))
+            )
             yield scrapy.Request(
-                link.url,
+                blog_url,
                 callback=self.getDetails,
             )
 
     def getDetails(self, response):
+        title = response.xpath("//meta[@property='og:title']/@content").get()
+        description = response.xpath(
+            "//meta[@property='og:description']/@content"
+        ).get()
+        image = response.xpath("//meta[@property='og:image']/@content").get()
+        date = self.getDate(response)
         yield BlogArticle(
+            blog_name=self.blog_name,
             url=response.url,
-            date=self.getDate(response),
-            title=self.getTitle(response),
+            title=title,
+            description=description,
+            image=image,
+            date=date,
         )
 
     def getDate(self, response):
-        query = self.date if self.date is not None else "//@datetime"
-        rawDate = response.xpath(query).get()
-        # default to get the current year when it is not specified in the rawDate
-        parsedDateTime = parser.parse(rawDate, default=datetime.now())
-        return parsedDateTime.date()
-
-    def getTitle(self, response):
-        url = response.url
-        url_parts = url.split("/")
-        title_with_hyphens = url_parts[-2] if url.endswith("/") else url_parts[-1]
-        title_words = title_with_hyphens.split("-")
-        rawTitle = " ".join(title_words)
-        return self.title(rawTitle) if self.title is not None else rawTitle
+        datetime_str = response.xpath(
+            "//meta[@property='article:published_time']/@content"
+        ).get()
+        if not datetime_str:
+            datetime_str = response.xpath(self.date).get()
+        datetime_obj = parser.parse(datetime_str, ignoretz=True, default=datetime.now())
+        return datetime_obj.date()

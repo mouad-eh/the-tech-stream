@@ -7,6 +7,9 @@ import scrapy
 
 
 class BlogArticle(scrapy.Item):
+    blog_name = scrapy.Field()
     url = scrapy.Field()
-    date = scrapy.Field()
     title = scrapy.Field()
+    description = scrapy.Field()
+    image = scrapy.Field()
+    date = scrapy.Field()
