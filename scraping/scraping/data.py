@@ -1,4 +1,4 @@
-blogs = {
+BLOGS = {
     "discord": {
         "domain": "discord.com",
         "start_url": "https://discord.com/category/engineering",

@@ -3,11 +3,10 @@ from scraping.items import BlogArticle
 from urllib.parse import urlunparse
 from dateutil import parser
 from datetime import datetime
-import logging
 
 
 class BlogSpider(scrapy.Spider):
-    name = "engblog"
+    name = "blogSpider"
 
     def __init__(self, date=None, *args, **kwargs):
         super(BlogSpider, self).__init__(*args, **kwargs)
