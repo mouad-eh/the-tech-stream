@@ -36,10 +36,10 @@ BLOGS = {
         "date": "//span[@class='b5 gt b7 ff hc']/text()",
     },
     "linkedin": {
-        "domain": "engineering.linkedin.com",
-        "start_url": "https://engineering.linkedin.com/blog",
-        "blog_url_xpath": "//div[@class='post']//h2/a/@href",
-        "date": "//div[@class='date']/text()",
+        "domain": "www.linkedin.com",
+        "start_url": "https://www.linkedin.com/blog/engineering/",
+        "blog_url_xpath": "//div[@id='all-posts']//li/div[@class='grid-post__title']/a/@href",
+        "date": "//@data-published-date",
     },
     "facebook": {
         "domain": "engineering.fb.com",
