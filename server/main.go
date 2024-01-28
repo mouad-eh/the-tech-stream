@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
@@ -34,6 +35,7 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	// Health Check route
 	r.GET("/healthz", func(c *gin.Context) {
