@@ -35,12 +35,12 @@ func init() {
 func main() {
 	r := gin.Default()
 
-	// Existing route
-	r.GET("/api/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
+	// Health Check route
+	r.GET("/healthz", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Every thing is fine!"})
 	})
 
-	// New route for paginated blog articles
+	// Paginated blog articles route
 	r.GET("/api/blog-articles", getBlogArticles)
 
 	r.Run(":8080")
@@ -49,13 +49,16 @@ func main() {
 func getBlogArticles(c *gin.Context) {
 	var rows *sql.Rows
 
+	// Get limit from query parameters
 	limit, err := strconv.Atoi(c.Query("limit"))
 	if err != nil {
 		limit = 10
 	}
 
+	// Get cursor from query parameters
 	cursor := c.Query("cursor")
-	// fmt.Println(cursor)
+
+	// Query database based on cursor value
 	if cursor == "" {
 		query := "SELECT * FROM blog_articles ORDER BY id DESC limit $1;"
 		rows, err = db.Query(query, limit)
