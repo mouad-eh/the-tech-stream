@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ var db *sql.DB
 
 func init() {
 	// Database connection string
-	connStr := "postgres://postgres:postgres@localhost:5432/test?sslmode=disable"
+	connStr := os.Getenv("DB_URI")
 	var err error
 
 	// Open a connection to the database
