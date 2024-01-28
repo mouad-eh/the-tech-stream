@@ -2,12 +2,12 @@ from itemadapter import ItemAdapter
 import psycopg2
 from urllib.parse import urlparse
 import os
-
+from uuid import uuid4
 
 class ScrapingPipeline:
     CREATE_TABLE1_QUERY = """
         CREATE TABLE IF NOT EXISTS blog_articles (
-            id SERIAL PRIMARY KEY,
+            id VARCHAR(255) PRIMARY KEY,
             blog_name VARCHAR(255),
             url VARCHAR(255),
             title VARCHAR(255),
@@ -86,10 +86,13 @@ class ScrapingPipeline:
 
     def insert_item(self, item):
         query = """
-        INSERT INTO blog_articles (blog_name, url, title, description, image, date)
-        VALUES (%s, %s, %s, %s, %s, %s);
+        INSERT INTO blog_articles (id, blog_name, url, title, description, image, date)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
+        # this id helps with pagination and chronological order in blog articles feed.
+        id = item["date"].strftime("%Y-%m-%d-") + str(uuid4())
         values = (
+            id,
             item["blog_name"],
             item["url"],
             item["title"],
