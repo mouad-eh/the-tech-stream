@@ -1,8 +1,9 @@
-from itemadapter import ItemAdapter
 import psycopg2
+import time
 from urllib.parse import urlparse
 import os
 from uuid import uuid4
+import logging
 
 class ScrapingPipeline:
     CREATE_TABLE1_QUERY = """
@@ -26,18 +27,27 @@ class ScrapingPipeline:
     """
 
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.items = []
+        self.conn = None
 
     def open_spider(self, spider):
         connection_string = os.environ.get("DB_URI")
         url = urlparse(connection_string)
-        self.conn = psycopg2.connect(
-            dbname=url.path[1:],
-            user=url.username,
-            password=url.password,
-            host=url.hostname,
-            port=url.port,
-        )
+        while not self.conn:
+            try:
+                self.conn = psycopg2.connect(
+                    dbname=url.path[1:],
+                    user=url.username,
+                    password=url.password,
+                    host=url.hostname,
+                    port=url.port,
+                )
+                self.logger.info("Database connection successful")
+                break
+            except psycopg2.OperationalError as e:
+                self.logger.error(e)
+                time.sleep(5)
         self.cursor = self.conn.cursor()
         self.cursor.execute(ScrapingPipeline.CREATE_TABLE1_QUERY)
         self.cursor.execute(ScrapingPipeline.CREATE_TABLE2_QUERY)

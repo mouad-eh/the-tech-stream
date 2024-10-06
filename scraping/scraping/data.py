@@ -11,24 +11,24 @@ BLOGS = {
         "blog_url_xpath": "//main//article/div/a[1]/@href | //main//article/a/@href",
         "date": "//article/p/text()",
     },
-    "shopify": {
-        "domain": "shopify.engineering",
-        "start_url": "https://shopify.engineering/",
-        "blog_url_xpath": "//article/h2/a/@href",
-        "date": "//@datetime",
-    },
+    # "shopify": {
+    #     "domain": "shopify.engineering",
+    #     "start_url": "https://shopify.engineering/",
+    #     "blog_url_xpath": "//article/h2/a/@href",
+    #     "date": "//@datetime",
+    # },
     "stripe": {
         "domain": "stripe.com",
         "start_url": "https://stripe.com/blog/engineering",
         "blog_url_xpath": "//article/h1/a/@href",
         "date": "//@datetime",
     },
-    "github": {
-        "domain": "github.blog",
-        "start_url": "https://github.blog/category/engineering/",
-        "blog_url_xpath": "//article//h2/a/@href",
-        "date": "//@datetime",
-    },
+    # "github": {
+    #     "domain": "github.blog",
+    #     "start_url": "https://github.blog/category/engineering/",
+    #     "blog_url_xpath": "//article//h2/a/@href",
+    #     "date": "//@datetime",
+    # },
     "uber": {
         "domain": "www.uber.com",
         "start_url": "https://www.uber.com/en-ES/blog/engineering/",
