@@ -26,8 +26,9 @@ interface CardGridProps {
 
 
 export default function CardGrid({initialData}: CardGridProps) {
-  const { ref, inView } = useInView();
+    const { ref, inView } = useInView();
     const [data, setData] = useState<Post[]>(initialData);
+    const [allLoaded, setAllLoaded] = useState<boolean>(false);
 
     const fetchMoreData = async () => {
       // Fetch more data when scrolling
@@ -35,6 +36,9 @@ export default function CardGrid({initialData}: CardGridProps) {
       const moreData = await response.json();
       const morePosts = moreData.articles
 
+      if(morePosts.length == 0){
+        setAllLoaded(true);
+      }
       // Update the state with the new data
       setData((prevData: Post[]) => [...prevData, ...morePosts]);
     };
@@ -46,16 +50,18 @@ export default function CardGrid({initialData}: CardGridProps) {
     }, [inView]);
 
     return(
-        <main className="p-4 bg-gray-50 text-black flex flex-row flex-wrap gap-5 justify-center">
-        {data.map(post => (
-          <Card key={post.title} title={post.title} blog_name={post.blog_name}
-          url={post.url} image={post.image.String}
-          date={post.date} description={post.description.String}
-          />
-        ))}
-        <div ref={ref}>
-          Loading...
+      <main className="p-4 bg-gray-50 text-black ">
+        <section className='flex flex-row flex-wrap gap-5 justify-center'>
+          {data.map(post => (
+            <Card key={post.title} title={post.title} blog_name={post.blog_name}
+            url={post.url} image={post.image.String}
+            date={post.date} description={post.description.String}
+            />
+          ))}
+        </section>
+        <div ref={ref} className='pt-4 text-center'>
+          {!allLoaded ? "Loading..." : null}
         </div>
-    </main>
+      </main>
     );
 }

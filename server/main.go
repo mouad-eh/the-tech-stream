@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,15 +21,27 @@ func init() {
 	var err error
 
 	// Open a connection to the database
-	db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
+	for {
+		db, err = sql.Open("postgres", connStr)
+		if err != nil {
+			// panic(err)
+			fmt.Println(err)
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		break
 	}
 
 	// Test the connection
-	err = db.Ping()
-	if err != nil {
-		panic(err)
+	for{
+		err = db.Ping()
+		if err != nil {
+			// panic(err)
+			fmt.Println(err)
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		break
 	}
 	fmt.Println("Successfully connected to the database")
 }
