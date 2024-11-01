@@ -8,7 +8,6 @@
 **server:** built using golang (Gin Framework), it implements key set pagination when retreiving blog posts from the database.
 
 **ui:** the frontend is built using next-js, the main page display a feed of engineering blog posts, as user scrolls the feed will load more posts.
-## Deployment Plan
-For deployment I am planning to use AWS:
+## Deployment Plans
 
-![deployment plan](./deployment-plan.png)
+![deployment plan](./the-tech-stream.drawio.png)
