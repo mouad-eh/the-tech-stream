@@ -1,0 +1,29 @@
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: user
+    expose:
+      - 5432
+  scraper:
+    build:
+      context: ./scraping
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - database
+    environment:
+      DB_URI: postgresql://user:user@database:5432/user
+      # DB_URI: postgresql://user:user@172.18.0.2:5432/user
+  server:
+    build:
+      context: ./server
+    depends_on:
+      - database
+    environment:
+      # DB_URI: "host=database port=5432 user=user password=user dbname=user sslmode=disable"
+      DB_URI: postgresql://user:user@database:5432/user?sslmode=disable
+      # DB_URI: postgresql://user:user@172.18.0.2:5432/user
+    ports:
+      - "4000:8080"

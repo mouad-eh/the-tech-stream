@@ -1,0 +1,20 @@
+services:
+  server:
+    build:
+      context: ./server
+    env_file:
+      - ./db.env
+    expose:
+      - 8080
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-2.conf:/etc/nginx/nginx.conf
+      - /var/www/api.engineering-blogs.tech:/var/www/api.engineering-blogs.tech
+      - /etc/letsencrypt/live/api.engineering-blogs.tech:/etc/ssl
+      - /etc/letsencrypt/archive/api.engineering-blogs.tech:/archive/api.engineering-blogs.tech
+    depends_on:
+      - server

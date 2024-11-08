@@ -10,11 +10,14 @@ services:
   scraper:
     build:
       context: ./scraping
+      dockerfile: Dockerfile.prod
     depends_on:
       - database
     environment:
       DB_URI: postgresql://user:user@database:5432/user
       # DB_URI: postgresql://user:user@172.18.0.2:5432/user
+    ports:
+      - "9000:8080"
   server:
     build:
       context: ./server
