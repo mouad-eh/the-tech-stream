@@ -16,6 +16,7 @@ class ScrapingPipeline:
             image VARCHAR(255),
             date DATE
         );
+        CREATE INDEX IF NOT EXISTS idx_blog_articles_id ON blog_articles(id);
     """
     CREATE_TABLE2_QUERY = """
         CREATE TABLE IF NOT EXISTS latest_blog_article (
